@@ -223,6 +223,8 @@ PODS:
     - React
   - RNCPushNotificationIOS (1.0.3):
     - React
+  - RNDateTimePicker (2.1.0):
+    - React
   - RNGestureHandler (1.5.3):
     - React
   - RNScreens (2.0.0-alpha.22):
@@ -260,6 +262,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -323,6 +326,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/masked-view"
   RNCPushNotificationIOS:
     :path: "../node_modules/@react-native-community/push-notification-ios"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
@@ -359,10 +364,11 @@ SPEC CHECKSUMS:
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNCMaskedView: c8b53164b85ecf94c9a44d67082df0f03c1f74cc
   RNCPushNotificationIOS: 5403d137a49c55f0dc2273be8473873e934359cd
+  RNDateTimePicker: 68e542a59ff1b73563744145bfc45c2b88a3deea
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNScreens: 6adf01eb4080f44af6cca551207c6b0505066857
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 05b08c0f7b25f256ff10bd54e55b2fe619f675c5
+PODFILE CHECKSUM: 139cfdeba446215527a6e83b9dd0b1536ab237cd
 
 COCOAPODS: 1.8.4
