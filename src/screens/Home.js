@@ -1,6 +1,11 @@
 import React from 'react';
+import styled, { css } from '@emotion/native';
 
-import { View, Button, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Button, TouchableOpacity, Text } from 'react-native';
+
+/**
+ * TODO: Push to its own module
+ */
 import PushNotification from 'react-native-push-notification';
 
 import { useConfig } from '../config/ConfigProvider';
@@ -65,33 +70,70 @@ export default ({ navigation }) => {
     });
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={() => scheduleDeferredNotification({ repeatType: 'minute' })}>
-        <Text style={styles.buttonText}>Start</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={cancelNotification}>
-        <Text style={styles.buttonText}>Stop</Text>
-      </TouchableOpacity>
-    </View>
+    // <View style={styles.container}>
+    //   <TouchableOpacity
+    //     style={styles.buttonContainer}
+    //     onPress={() => scheduleDeferredNotification({ repeatType: 'minute' })}>
+    //     <Text style={styles.buttonText}>Start</Text>
+    //   </TouchableOpacity>
+    //   <TouchableOpacity
+    //     style={styles.buttonContainer}
+    //     onPress={cancelNotification}>
+    //     <Text style={styles.buttonText}>Stop</Text>
+    //   </TouchableOpacity>
+    // </View>
+    <PageStyled>
+      <Card title="Start" onPress={() => {}} />
+      <CardSeparator />
+      <Card title="Stop" onPress={() => {}} />
+    </PageStyled>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-  },
-  buttonText: {},
-});
+const Card = ({ title, onPress }) => (
+  <ShadowContainer>
+    <CardContainer>
+      <TouchableOpacity accessibilityRole="button" onPress={onPress}>
+        <CardElement>
+          <Text
+            style={css`
+              color: #fff;
+              font-size: 32px;
+            `}>
+            {title}
+          </Text>
+        </CardElement>
+      </TouchableOpacity>
+    </CardContainer>
+  </ShadowContainer>
+);
+
+const PageStyled = styled.View`
+  flex: 1;
+  justify-content: center;
+
+  padding: 8px;
+  background-color: #fff;
+`;
+
+const ShadowContainer = styled.View`
+  box-shadow: 0px 8px 5px #e4e7f5;
+`;
+
+const CardContainer = styled.View`
+  overflow: hidden;
+  border-radius: 8px;
+`;
+
+const CardElement = styled.View`
+  justify-content: center;
+  align-items: center;
+
+  height: 136px;
+
+  background-color: #fab39d;
+`;
+
+const CardSeparator = styled.View`
+  height: 24px;
+`;

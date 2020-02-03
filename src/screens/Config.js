@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
+import { Button } from 'react-native';
+import styled from '@emotion/native';
 
 import { useConfig } from '../config/ConfigProvider';
 
@@ -7,12 +8,19 @@ export default ({ navigation }) => {
   const [config, setConfig] = useConfig();
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Config Screen</Text>
+    <PageStyled>
       <Button
         title="Save and go home"
         onPress={() => navigation.navigate('Home')}
       />
-    </View>
+    </PageStyled>
   );
 };
+
+const PageStyled = styled.View`
+  flex: 1;
+  justify-content: center;
+
+  padding: 8px;
+  background-color: #fff;
+`;
