@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '13.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'mindfulness' do
@@ -35,7 +35,6 @@ target 'mindfulness' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
-  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec'
 
   target 'mindfulnessTests' do
     inherit! :search_paths
@@ -43,14 +42,4 @@ target 'mindfulness' do
   end
 
   use_native_modules!
-end
-
-target 'mindfulness-tvOS' do
-  # Pods for mindfulness-tvOS
-
-  target 'mindfulness-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
 end
