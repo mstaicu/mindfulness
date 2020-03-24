@@ -28,9 +28,9 @@ const INITIAL_STATE = {
      * If 'repeatType' is set to 'time', you need to specify 'repeatTime' as well, as a value of milliseconds
      * that define the interval between each repeat
      */
-    // repeatType: 'minute',
-    repeatType: 'time',
-    repeatTime: 10000
+    repeatType: 'minute',
+    // repeatType: 'time',
+    // repeatTime: 10000
   }
 };
 
