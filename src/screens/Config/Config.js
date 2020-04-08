@@ -1,36 +1,52 @@
-import React, { useState } from 'react';
-import { View, TextInput, Picker } from 'react-native';
+import React, { useReducer, useEffect } from 'react';
+import { Picker, Switch } from 'react-native';
+
 import styled, { css } from '@emotion/native';
 
-import { useConfig } from '../../utils';
+import { useAppState } from '../../utils';
 
-const REPEAT_TYPE_MAP = {
-  month: 'Lunar',
-  week: 'Săptămânal',
-  day: 'Zilnic',
-  hour: 'Fiecare oră',
-  minute: 'Fiecare minut'
-};
+export const ConfigScreen = () => {
+  const [{ notification }, dispatch] = useAppState();
 
-export const ConfigScreen = ({ navigation }) => {
-  const [settings, updateSettings] = useConfig();
+  const updateNotificationSettings = updatedNotificationSettings =>
+    dispatch({
+      notification: { ...notification, ...updatedNotificationSettings }
+    });
 
-  const RepeatTypePicker = () => (
+  /**
+   * Whenever we update the notification settings, update the local cache
+   */
+  useEffect(() => {
+    updateCache(notification);
+  }, [notification]);
+
+  /**
+   * Work on a copy of the notification settings in order to allow the users to rollback
+   */
+  const [cache, updateCache] = useReducer(
+    (prevState, newState) => ({
+      ...prevState,
+      ...newState
+    }),
+    notification
+  );
+
+  const RepeatTypePicker = ({ repeatType, onValueChange }) => (
     <Picker
-      selectedValue={settings.notification.repeatType}
-      style={css`
-        width: 100%;
-
-        font-family: OpenSans-Regular;
-        font-size: 16px;
-
-        color: #feece7;
-      `}
-      onValueChange={repeatType =>
-        updateSettings({
-          notification: { ...settings.notification, repeatType }
+      selectedValue={repeatType}
+      onValueChange={updatedRepeatType =>
+        onValueChange({
+          repeatType: updatedRepeatType
         })
       }
+      style={css`
+        font-family: OpenSans-Regular;
+        font-size: 16px;
+      `}
+      itemStyle={css`
+        font-family: OpenSans-Regular;
+        font-size: 16px;
+      `}
     >
       <Picker.Item label='Lunar' value='month' />
       <Picker.Item label='Săptămânal' value='week' />
@@ -42,73 +58,73 @@ export const ConfigScreen = ({ navigation }) => {
 
   return (
     <PageStyled>
-      <Chip elevation={8}>
-        <Circle>
-          <VerticalBar />
-          <HorizontalBar />
-        </Circle>
+      <Rows elevation={4}>
+        <Row style={{ padding: 8 }}>
+          <Left>
+            <Label>Titlul notificării</Label>
+            <Input
+              placeholder='Titlul notificării'
+              onChangeText={updatedTitle =>
+                updateCache({ title: updatedTitle })
+              }
+              value={cache.title}
+            />
+          </Left>
+
+          <Right>
+            <Switch
+              trackColor={{ false: '#fcf8f3', true: '#fcf8f3' }}
+              thumbColor={
+                cache.title === notification.title ? '#698474' : '#ffaaa5'
+              }
+              value={cache.title === notification.title}
+              onValueChange={() =>
+                updateNotificationSettings({ title: cache.title })
+              }
+            />
+          </Right>
+        </Row>
+
         <Separator />
-        <InnerChip>
-          <TextInput
-            style={css`
-              width: 100%;
-              font-family: OpenSans-Regular;
-              font-size: 16px;
 
-              color: #feece7;
-            `}
-            placeholder='Titlul notificării'
-            onChangeText={title =>
-              updateSettings({
-                notification: { ...settings.notification, title }
-              })
-            }
-            value={settings.notification.title}
-          />
-        </InnerChip>
-      </Chip>
+        <Row style={{ padding: 8 }}>
+          <Left>
+            <Label>Mesajul notificării</Label>
+            <Input
+              placeholder='Mesajul notificării'
+              onChangeText={updatedMessage =>
+                updateCache({ message: updatedMessage })
+              }
+              value={cache.message}
+            />
+          </Left>
 
-      <ChipSeparator />
+          <Right>
+            <Switch
+              trackColor={{ false: '#fcf8f3', true: '#fcf8f3' }}
+              thumbColor={
+                cache.message === notification.message ? '#698474' : '#ffaaa5'
+              }
+              value={cache.message === notification.message}
+              onValueChange={() =>
+                updateNotificationSettings({ message: cache.message })
+              }
+            />
+          </Right>
+        </Row>
 
-      <Chip elevation={8}>
-        <Circle>
-          <VerticalBar />
-          <HorizontalBar />
-        </Circle>
         <Separator />
-        <InnerChip>
-          <TextInput
-            style={css`
-              width: 100%;
 
-              font-family: OpenSans-Regular;
-              font-size: 16px;
-
-              color: #feece7;
-            `}
-            placeholder='Mesajul notificării'
-            onChangeText={message =>
-              updateSettings({
-                notification: { ...settings.notification, message }
-              })
-            }
-            value={settings.notification.message}
-          />
-        </InnerChip>
-      </Chip>
-
-      <ChipSeparator />
-
-      <Chip elevation={8}>
-        <Circle>
-          <VerticalBar />
-          <HorizontalBar />
-        </Circle>
-        <Separator />
-        <InnerChip>
-          <RepeatTypePicker />
-        </InnerChip>
-      </Chip>
+        <Row style={{ padding: 8 }}>
+          <Left>
+            <Label>Intervalul notificării</Label>
+            <RepeatTypePicker
+              repeatType={cache.repeatType}
+              onValueChange={updateNotificationSettings}
+            />
+          </Left>
+        </Row>
+      </Rows>
     </PageStyled>
   );
 };
@@ -122,60 +138,42 @@ const PageStyled = styled.View`
   background-color: #fcf8f3;
 `;
 
-const Chip = styled.View`
-  width: 100%;
-  height: 72;
-
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-
-  border-radius: 48px;
-
-  background-color: #f9a186;
-`;
-
-const InnerChip = styled(Chip)`
-  width: 75%;
-  height: 75%;
-  padding: 0 24px;
-
-  flex-direction: row;
-  justify-content: flex-start;
-
-  background-color: #fbc7b6;
-`;
-
 const Separator = styled.View`
-  width: 16px;
+  height: 2px;
+  background-color: #fcf8f3;
 `;
 
-const Circle = styled.TouchableOpacity`
-  width: 48px;
-  height: 48px;
+const Rows = styled.View`
+  background-color: transparent;
 
-  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+`;
+
+const Row = styled.View`
+  width: 100%;
+
+  flex-direction: row;
   align-items: center;
 
-  border-radius: 24px;
-
-  background-color: #fbc7b6;
+  background-color: #fff;
 `;
 
-const VerticalBar = styled.View`
-  width: 2px;
-  height: 16px;
-
-  position: absolute;
-
-  background-color: #feece7;
+const Label = styled.Text`
+  font-size: 8px;
 `;
 
-const HorizontalBar = styled(VerticalBar)`
-  transform: rotate(-90deg);
+const Left = styled.View`
+  flex: 10;
 `;
 
-const ChipSeparator = styled.View`
+const Right = styled.View`
+  flex: 1;
+`;
+
+const Input = styled.TextInput`
   width: 100%;
-  height: 16px;
+  padding: 0;
+  font-family: OpenSans-Regular;
+  font-size: 16px;
 `;

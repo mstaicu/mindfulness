@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { ConfigProvider } from './utils';
+import { StateProvider } from './utils';
 
 import Router from './router';
 
 export default () => (
-  <ConfigProvider>
+  <StateProvider>
     <Router />
-  </ConfigProvider>
+  </StateProvider>
 );

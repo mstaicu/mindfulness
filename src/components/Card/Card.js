@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import styled, { css } from '@emotion/native';
+import { TouchableOpacity } from 'react-native';
+import styled from '@emotion/native';
 
 const Card = ({ children, onPress }) => (
   <ShadowContainer>

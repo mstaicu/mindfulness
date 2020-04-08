@@ -1,0 +1,54 @@
+apply plugin: EnterpriseRepositoryPlugin
+
+class EnterpriseRepositoryPlugin implements Plugin<Gradle> {
+
+    private static String ENTERPRISE_REPOSITORY_URL = "https://artifactory.dyn.prd.aws.jpmchase.net/artifactory/mavenprd"
+    private static String REACT_NATIVE_URL = "node_modules/react-native/android"
+    private static String ANDROID_JSC_URL = "node_modules/jsc-android/dist"
+
+    def configRepositories = { ->
+        // Remove all repositories not pointing to the enterprise repository url
+        all { ArtifactRepository repo ->
+            if (!isMaven(repo) || isExternalMaven(repo)) {
+                remove repo
+            }
+        }
+        // add the enterprise repository
+        jcenter {
+            name "BintrayJCenter"
+            url ENTERPRISE_REPOSITORY_URL
+        }
+    }
+
+    def configPluginManagement = { ->
+        repositories {
+            maven {
+                url ENTERPRISE_REPOSITORY_URL
+            }
+        }
+    }
+
+    def isMaven(repo) {
+        return repo instanceof MavenArtifactRepository
+    }
+
+    def isExternalMaven(repo) {
+        def url = repo.url.toString()
+        if (url.contains(REACT_NATIVE_URL)) return false
+        if (url.contains(ANDROID_JSC_URL)) return false
+        return url != ENTERPRISE_REPOSITORY_URL
+    }
+
+    void apply(Gradle gradle) {
+        gradle.settingsEvaluated { settings ->
+            settings.pluginManagement(configPluginManagement)
+        }
+
+        gradle.allprojects { project ->
+            // ONLY USE ENTERPRISE REPO FOR DEPENDENCIES
+            project.repositories(configRepositories)
+            // Only use enterprise repo for plugins classpath as well.
+            project.buildscript.repositories(configRepositories)
+        }
+    }
+}

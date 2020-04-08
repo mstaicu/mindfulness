@@ -1,5 +1,4 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 export const ConfigIcon = props => (

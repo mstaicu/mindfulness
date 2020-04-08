@@ -1,22 +1,9 @@
-import React from 'react';
-
 import PushNotification from 'react-native-push-notification';
 
-import { useConfig } from '../context';
-
-PushNotification.configure({
-  onNotification: function(notification) {
-    console.log('NOTIFICATION:', notification);
-
-    // process the notification
-
-    // required on iOS only (see fetchCompletionHandler docs: https://github.com/react-native-community/react-native-push-notification-ios)
-    notification.finish('backgroundFetchResultNewData');
-  }
-});
+import { useAppState } from '../context';
 
 export const useNotifications = () => {
-  const [{ notification }, setConfig] = useConfig();
+  const [{ notification }, dispatch] = useAppState();
 
   const scheduleNotification = () => {
     PushNotification.localNotificationSchedule({
@@ -27,7 +14,7 @@ export const useNotifications = () => {
       date: new Date(Date.now() + 10 * 1000)
     });
 
-    setConfig({
+    dispatch({
       active: true
     });
   };
@@ -35,7 +22,7 @@ export const useNotifications = () => {
   const cancelNotification = () => {
     PushNotification.cancelLocalNotifications(notification);
 
-    setConfig({
+    dispatch({
       active: false
     });
   };
