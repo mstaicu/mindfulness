@@ -6,13 +6,21 @@ export const useNotifications = () => {
   const [{ notification }, dispatch] = useAppState();
 
   const scheduleNotification = () => {
-    PushNotification.localNotificationSchedule({
+    const ONSET = {
+      hour: new Date(Date.now() + 60 * 60 * 1000),
+      minute: new Date(Date.now() + 60 * 1000)
+    };
+
+    const scheduledNotification = {
       ...notification,
+
       /**
-       * Starts the notification intervals in 60 seconds
+       * We need the notificattion start offset
        */
-      date: new Date(Date.now() + 10 * 1000)
-    });
+      date: ONSET[notification.repeatType]
+    };
+
+    PushNotification.localNotificationSchedule(scheduledNotification);
 
     dispatch({
       active: true

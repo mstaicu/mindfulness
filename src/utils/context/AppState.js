@@ -5,6 +5,10 @@ import React, {
   useContext,
   useRef
 } from 'react';
+
+import deepmerge from 'deepmerge';
+import equal from 'deep-equal';
+
 import AsyncStorage from '@react-native-community/async-storage';
 
 /**
@@ -36,6 +40,10 @@ const INITIAL_STATE = {
      * that define the interval between each repeat
      */
     repeatType: 'minute'
+
+    /**
+     * TODO: Implement custom time offsets
+     */
     // repeatType: 'time',
     // repeatTime: 10000
   }
@@ -44,37 +52,32 @@ const INITIAL_STATE = {
 const StateContext = createContext();
 
 const StateProvider = props => {
-  console.log('Updating application state...');
-
-  const [state, dispatch] = useReducer(
-    (prevState, newState) => ({
-      ...prevState,
-      ...newState
-    }),
-    INITIAL_STATE
-  );
-
+  const [state, dispatch] = useReducer(deepmerge, INITIAL_STATE);
   const previousState = useRef(state);
 
   /**
    * When the application loads, load the notification stored state
    */
   useEffect(() => {
-    console.log('Retrieving the persistend application state...');
+    console.log('Retrieving the application state from local storage...');
 
     const getAppState = async () => {
       try {
-        const persistedState = await AsyncStorage.getItem('appState');
+        const serializedPersistedState = await AsyncStorage.getItem('appState');
+        const persistedState = JSON.parse(serializedPersistedState);
 
         if (persistedState !== null) {
           dispatch(persistedState);
-
-          console.log('App state retrieved and loaded');
+          console.log('App state retrieved from local storage');
+        } else {
+          console.log(
+            'No persisted app state found in local storage, using the default state'
+          );
         }
-
-        console.log('No persisted app state found');
       } catch (e) {
-        console.error(e);
+        console.error(
+          `There was an error trying to load the application state from local storage. \n ${e}`
+        );
       }
     };
 
@@ -85,20 +88,18 @@ const StateProvider = props => {
    * When we have a global state change, persist it to storage
    */
   useEffect(() => {
-    /**
-     * todo(mircea): Hope this doesn't come back and bite us, a cheaper way of checking
-     *    if two objects are the same, i.e. have the same properties and property values
-     */
-    if (JSON.stringify(previousState.current) !== JSON.stringify(state)) {
-      console.log('App state changed, persisting it..');
+    if (equal(previousState.current, state) === false) {
+      console.log('App state changed, persisting it to local storage..');
 
       const persistState = async () => {
         try {
           await AsyncStorage.setItem('appState', JSON.stringify(state));
 
-          console.log('Successfully persisted the app state');
+          console.log('Successfully persisted the app state to local storage');
         } catch (e) {
-          console.error('There was a problem persisting the app state');
+          console.error(
+            'There was a problem persisting the app state to local storage'
+          );
         }
       };
 

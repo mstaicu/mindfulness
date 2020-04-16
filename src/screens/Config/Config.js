@@ -1,5 +1,5 @@
-import React, { useReducer, useEffect } from 'react';
-import { Picker, Switch } from 'react-native';
+import React, { useState } from 'react';
+import { Picker, TouchableNativeFeedback, View, Text } from 'react-native';
 
 import styled, { css } from '@emotion/native';
 
@@ -8,28 +8,8 @@ import { useAppState } from '../../utils';
 export const ConfigScreen = () => {
   const [{ notification }, dispatch] = useAppState();
 
-  const updateNotificationSettings = updatedNotificationSettings =>
-    dispatch({
-      notification: { ...notification, ...updatedNotificationSettings }
-    });
-
-  /**
-   * Whenever we update the notification settings, update the local cache
-   */
-  useEffect(() => {
-    updateCache(notification);
-  }, [notification]);
-
-  /**
-   * Work on a copy of the notification settings in order to allow the users to rollback
-   */
-  const [cache, updateCache] = useReducer(
-    (prevState, newState) => ({
-      ...prevState,
-      ...newState
-    }),
-    notification
-  );
+  const [cache, setCache] = useState(notification);
+  const updateCache = partialCache => setCache({ ...cache, ...partialCache });
 
   const RepeatTypePicker = ({ repeatType, onValueChange }) => (
     <Picker
@@ -39,18 +19,7 @@ export const ConfigScreen = () => {
           repeatType: updatedRepeatType
         })
       }
-      style={css`
-        font-family: OpenSans-Regular;
-        font-size: 16px;
-      `}
-      itemStyle={css`
-        font-family: OpenSans-Regular;
-        font-size: 16px;
-      `}
     >
-      <Picker.Item label='Lunar' value='month' />
-      <Picker.Item label='Săptămânal' value='week' />
-      <Picker.Item label='Zilnic' value='day' />
       <Picker.Item label='Fiecare oră' value='hour' />
       <Picker.Item label='Fiecare minut' value='minute' />
     </Picker>
@@ -58,7 +27,7 @@ export const ConfigScreen = () => {
 
   return (
     <PageStyled>
-      <Rows elevation={4}>
+      <RoundContainer elevation={4}>
         <Row style={{ padding: 8 }}>
           <Left>
             <Label>Titlul notificării</Label>
@@ -71,18 +40,7 @@ export const ConfigScreen = () => {
             />
           </Left>
 
-          <Right>
-            <Switch
-              trackColor={{ false: '#fcf8f3', true: '#fcf8f3' }}
-              thumbColor={
-                cache.title === notification.title ? '#698474' : '#ffaaa5'
-              }
-              value={cache.title === notification.title}
-              onValueChange={() =>
-                updateNotificationSettings({ title: cache.title })
-              }
-            />
-          </Right>
+          <Right></Right>
         </Row>
 
         <Separator />
@@ -99,18 +57,7 @@ export const ConfigScreen = () => {
             />
           </Left>
 
-          <Right>
-            <Switch
-              trackColor={{ false: '#fcf8f3', true: '#fcf8f3' }}
-              thumbColor={
-                cache.message === notification.message ? '#698474' : '#ffaaa5'
-              }
-              value={cache.message === notification.message}
-              onValueChange={() =>
-                updateNotificationSettings({ message: cache.message })
-              }
-            />
-          </Right>
+          <Right></Right>
         </Row>
 
         <Separator />
@@ -120,11 +67,45 @@ export const ConfigScreen = () => {
             <Label>Intervalul notificării</Label>
             <RepeatTypePicker
               repeatType={cache.repeatType}
-              onValueChange={updateNotificationSettings}
+              onValueChange={updateCache}
             />
           </Left>
         </Row>
-      </Rows>
+      </RoundContainer>
+
+      <Spacer />
+
+      <RoundContainer
+        elevation={4}
+        style={css`
+          width: 100%;
+        `}
+      >
+        <TouchableNativeFeedback
+          onPress={() => dispatch({ notification: cache })}
+        >
+          <View
+            style={css`
+              padding: 8px;
+
+              background-color: #fff;
+            `}
+          >
+            <Text
+              style={css`
+                width: 100%;
+
+                text-align: center;
+
+                font-family: OpenSans-Regular;
+                font-size: 16px;
+              `}
+            >
+              Salvează
+            </Text>
+          </View>
+        </TouchableNativeFeedback>
+      </RoundContainer>
     </PageStyled>
   );
 };
@@ -143,7 +124,11 @@ const Separator = styled.View`
   background-color: #fcf8f3;
 `;
 
-const Rows = styled.View`
+const Spacer = styled.View`
+  height: 16px;
+`;
+
+const RoundContainer = styled.View`
   background-color: transparent;
 
   overflow: hidden;
