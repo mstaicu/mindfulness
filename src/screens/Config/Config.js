@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Picker, TouchableNativeFeedback, View, Text } from 'react-native';
+import { TouchableNativeFeedback, View, Text } from 'react-native';
+import { Picker } from '@react-native-community/picker';
 
 import styled, { css } from '@emotion/native';
 

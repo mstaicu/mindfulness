@@ -52,64 +52,87 @@ const INITIAL_STATE = {
 const StateContext = createContext();
 
 const StateProvider = props => {
+  /**
+   * 1. Emit application state update
+   * 2. Application state is updated
+   * 3. If the previous application state is different from the current application state, save it to disk
+   */
   const [state, dispatch] = useReducer(deepmerge, INITIAL_STATE);
+
+  // Every time we emit a request to update and save the application state,
+  // we store the previous state in this variable, in order to compare the two
+  // objects and perform operations if they are different or not
   const previousState = useRef(state);
 
-  /**
-   * When the application loads, load the notification stored state
-   */
-  useEffect(() => {
+  const updateState = state => {
+    console.log(
+      `Emiting new state update request. Data: ${JSON.stringify(
+        state,
+        null,
+        2
+      )}`
+    );
+
+    dispatch(state);
+  };
+
+  const getAppState = async () => {
     console.log('Retrieving the application state from local storage...');
 
-    const getAppState = async () => {
-      try {
-        const serializedPersistedState = await AsyncStorage.getItem('appState');
-        const persistedState = JSON.parse(serializedPersistedState);
+    try {
+      const persistedState = JSON.parse(await AsyncStorage.getItem('appState'));
 
-        if (persistedState !== null) {
-          dispatch(persistedState);
-          console.log('App state retrieved from local storage');
-        } else {
-          console.log(
-            'No persisted app state found in local storage, using the default state'
-          );
-        }
-      } catch (e) {
-        console.error(
-          `There was an error trying to load the application state from local storage. \n ${e}`
+      if (persistedState !== null) {
+        updateState(persistedState);
+        console.log('Successfully retrieved saved state from local storage');
+      } else {
+        console.log(
+          'No persisted app state found in local storage, using the default state'
         );
       }
-    };
+    } catch (e) {
+      console.error(
+        `There was an error trying to load the application state from local storage. \n ${e}`
+      );
+    }
+  };
 
+  const persistState = async () => {
+    console.log('App state changed, persisting it to local storage..');
+
+    try {
+      await AsyncStorage.setItem('appState', JSON.stringify(state));
+      console.log('Successfully persisted the app state to local storage');
+    } catch (e) {
+      console.error(
+        'There was a problem persisting the app state to local storage'
+      );
+    } finally {
+      // save the current state as the previous state in order to have
+      // an account of the previous state recorded
+      previousState.current = state;
+    }
+  };
+
+  /**
+   * when the application loads, load the disk saved application state
+   */
+  useEffect(() => {
     getAppState();
   }, []);
 
   /**
-   * When we have a global state change, persist it to storage
+   * after we've emitted a request for a state update, save it to disk
+   * if they previous state and the state after merging with the emitted state
+   * are different
    */
   useEffect(() => {
     if (equal(previousState.current, state) === false) {
-      console.log('App state changed, persisting it to local storage..');
-
-      const persistState = async () => {
-        try {
-          await AsyncStorage.setItem('appState', JSON.stringify(state));
-
-          console.log('Successfully persisted the app state to local storage');
-        } catch (e) {
-          console.error(
-            'There was a problem persisting the app state to local storage'
-          );
-        }
-      };
-
       persistState();
-
-      previousState.current = state;
     }
   }, [state]);
 
-  return <StateContext.Provider value={[state, dispatch]} {...props} />;
+  return <StateContext.Provider value={[state, updateState]} {...props} />;
 };
 
 const useAppState = () => {
