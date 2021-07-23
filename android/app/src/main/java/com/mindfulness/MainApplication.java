@@ -21,26 +21,26 @@ public class MainApplication extends Application implements ReactApplication {
   public static final String CHANNEL_ID = "mindfulnessServiceChannel";
 
   private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHost(this) {
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
-        }
+    new ReactNativeHost(this) {
+      @Override
+      public boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
+      }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          packages.add(new VibratePackage());
-          return packages;
-        }
+      @Override
+      protected List<ReactPackage> getPackages() {
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        // Packages that cannot be autolinked yet can be added manually here, for example:
+        packages.add(new VibratePackage());
+        return packages;
+      }
 
-        @Override
-        protected String getJSMainModuleName() {
-          return "index";
-        }
-      };
+      @Override
+      protected String getJSMainModuleName() {
+        return "index";
+      }
+    };
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -52,8 +52,6 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-
-    createNotificationChannel();
   }
 
   /**
@@ -64,7 +62,7 @@ public class MainApplication extends Application implements ReactApplication {
    * @param reactInstanceManager
    */
   private static void initializeFlipper(
-      Context context, ReactInstanceManager reactInstanceManager) {
+    Context context, ReactInstanceManager reactInstanceManager) {
     if (BuildConfig.DEBUG) {
       try {
         /*
@@ -73,8 +71,8 @@ public class MainApplication extends Application implements ReactApplication {
         */
         Class<?> aClass = Class.forName("com.mindfulness.ReactNativeFlipper");
         aClass
-            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-            .invoke(null, context, reactInstanceManager);
+          .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+          .invoke(null, context, reactInstanceManager);
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       } catch (NoSuchMethodException e) {
@@ -90,9 +88,9 @@ public class MainApplication extends Application implements ReactApplication {
   private void createNotificationChannel() {
     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
       NotificationChannel serviceChannel = new NotificationChannel(
-              CHANNEL_ID,
-              "Mindfulness Service Channel",
-              NotificationManager.IMPORTANCE_DEFAULT
+        CHANNEL_ID,
+        "Mindfulness Service Channel",
+        NotificationManager.IMPORTANCE_DEFAULT
       );
 
       NotificationManager manager = getSystemService(NotificationManager.class);

@@ -1,10 +1,13 @@
 package com.mindfulness.vibrate;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
@@ -12,17 +15,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
-import com.mindfulness.VibrateJobScheduler;
 
 import javax.annotation.Nonnull;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class VibrateModule extends ReactContextBaseJavaModule {
 
   public static final String REACT_CLASS = "Vibrate";
-
-  Intent serviceIntent = new Intent(getReactApplicationContext(), VibrateService.class);
 
   public VibrateModule(@Nonnull ReactApplicationContext reactContext) {
     super(reactContext);
@@ -38,26 +36,24 @@ public class VibrateModule extends ReactContextBaseJavaModule {
   public void start() {
     ReactApplicationContext context = getReactApplicationContext();
 
-    context.startService(serviceIntent);
-// 2nd
-//        ComponentName componentName = new ComponentName(getReactApplicationContext(), VibrateJobScheduler.class);
-//        JobInfo info = new JobInfo.Builder(123, componentName)
-//                .setPersisted(true)
-//                .setPeriodic(15 * 60 * 1000)
-//                .build();
-//
-//        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        scheduler.schedule(info);
+    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+    Intent intent = new Intent(context, VibrateReceiver.class);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
   }
 
   @ReactMethod
   public void stop() {
     ReactApplicationContext context = getReactApplicationContext();
-//
-    context.stopService(serviceIntent);
-// 2nd
-//        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        scheduler.cancel(123);
+
+    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+    Intent intent = new Intent(context, VibrateReceiver.class);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+
+    alarmManager.cancel(pendingIntent);
   }
 
   @ReactMethod
@@ -77,12 +73,14 @@ public class VibrateModule extends ReactContextBaseJavaModule {
 
     Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-    if (vibrator.hasAmplitudeControl()) {
-      VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, mAmplitudes, -1);
-      vibrator.vibrate(effect);
-    } else {
-      VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, -1);
-      vibrator.vibrate(effect);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      if (vibrator.hasAmplitudeControl()) {
+        VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, mAmplitudes, -1);
+        vibrator.vibrate(effect);
+      } else {
+        VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, -1);
+        vibrator.vibrate(effect);
+      }
     }
   }
 }
