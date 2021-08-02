@@ -47,7 +47,7 @@ const ConfigScreen = () => {
           updateAppState({
             vibrationPattern: vPattern,
             vibrationAmplitudes: vAmplitudes,
-            repeatInterval: 60 * 1000,
+            repeatInterval: 30 * 60 * 1000,
           });
         }}
       />

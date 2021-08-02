@@ -1,10 +1,7 @@
 package com.mindfulness;
 
 import android.app.Application;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Build;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -18,8 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
-  public static final String CHANNEL_ID = "mindfulnessServiceChannel";
-
   private final ReactNativeHost mReactNativeHost =
     new ReactNativeHost(this) {
       @Override
@@ -82,19 +77,6 @@ public class MainApplication extends Application implements ReactApplication {
       } catch (InvocationTargetException e) {
         e.printStackTrace();
       }
-    }
-  }
-
-  private void createNotificationChannel() {
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-      NotificationChannel serviceChannel = new NotificationChannel(
-        CHANNEL_ID,
-        "Mindfulness Service Channel",
-        NotificationManager.IMPORTANCE_DEFAULT
-      );
-
-      NotificationManager manager = getSystemService(NotificationManager.class);
-      manager.createNotificationChannel(serviceChannel);
     }
   }
 }

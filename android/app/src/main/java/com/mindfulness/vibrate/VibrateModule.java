@@ -2,9 +2,6 @@ package com.mindfulness.vibrate;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,11 +12,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.mindfulness.utils.Utils;
 
 import javax.annotation.Nonnull;
 
 public class VibrateModule extends ReactContextBaseJavaModule {
-
+  public static final String TAG = "VibrateModule";
   public static final String REACT_CLASS = "Vibrate";
 
   public VibrateModule(@Nonnull ReactApplicationContext reactContext) {
@@ -39,9 +37,18 @@ public class VibrateModule extends ReactContextBaseJavaModule {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
     Intent intent = new Intent(context, VibrateReceiver.class);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+      context,
+      1,
+      intent,
+      0
+    );
 
-    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
+    alarmManager.setExact(
+      AlarmManager.RTC_WAKEUP,
+      System.currentTimeMillis() + Utils.getRepeatInterval(context),
+      pendingIntent
+    );
   }
 
   @ReactMethod
@@ -51,7 +58,12 @@ public class VibrateModule extends ReactContextBaseJavaModule {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
     Intent intent = new Intent(context, VibrateReceiver.class);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+      context,
+      1,
+      intent,
+      0
+    );
 
     alarmManager.cancel(pendingIntent);
   }
