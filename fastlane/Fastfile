@@ -7,7 +7,7 @@ end
 # $ fastlane android internal
 platform :android do
   lane :internal do
-    increment_version_code(gradle_file_path: './android/app/build.gradle')
+    # increment_version_code(gradle_file_path: './android/app/build.gradle')
 
     gradle(task: 'clean', project_dir: './android/')
     gradle(task: 'bundle', build_type: 'Debug', project_dir: './android/')
