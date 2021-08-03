@@ -1,17 +1,27 @@
-before_all do
-  ensure_git_branch
-  ensure_git_status_clean
-  git_pull
-end
-
 # $ fastlane android internal
 platform :android do
-  lane :internal do
-    # increment_version_code(gradle_file_path: './android/app/build.gradle')
+  desc "Deploy an internal test version to Google Play"
 
-    gradle(task: 'clean', project_dir: './android/')
-    gradle(task: 'bundle', build_type: 'Debug', project_dir: './android/')
-  
-    # supply(track: 'internal', aab: './android/app/build/outputs/bundle/debug/app-debug.aab')
+  lane :internal do
+    increment_version_code(
+      app_folder_name: './android/app',
+      gradle_file_path: './android/app/build.gradle'
+    )
+
+    gradle(
+      task: "clean", 
+      project_dir: './android'
+    )
+    gradle(
+      task: 'bundle',
+      build_type: 'Release',
+      project_dir: './android'
+    )
+
+    upload_to_play_store(
+      track: 'internal', 
+      release_status: 'draft', 
+      json_key: './mindfulness_play_store_service_account.json'
+    )
   end
 end

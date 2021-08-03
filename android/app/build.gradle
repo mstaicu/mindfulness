@@ -131,11 +131,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mindfulness"
+        applicationId "com.vibration.mindfulness"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.4"
     }
     splits {
         abi {
@@ -146,8 +146,7 @@ android {
         }
     }
     signingConfigs {
-        debug {
-        }
+        debug {}
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
@@ -158,8 +157,7 @@ android {
         }
     }
     buildTypes {
-        debug {
-        }
+        debug {}
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.

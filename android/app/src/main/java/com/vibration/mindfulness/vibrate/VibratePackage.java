@@ -1,4 +1,4 @@
-package com.mindfulness.vibrate;
+package com.vibration.mindfulness.vibrate;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
