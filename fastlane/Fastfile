@@ -21,7 +21,7 @@ platform :android do
     upload_to_play_store(
       track: 'internal', 
       release_status: 'draft', 
-      json_key: './mindfulness_play_store_service_account.json'
+      json_key: './play_store_service_account.json'
     )
   end
 end

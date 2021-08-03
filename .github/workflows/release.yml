@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+
+      - name: Install bundle 👷🏻‍♂️
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Unpack secret Google Play service account credentials 📦
+        run: |
+          echo "$PLAY_STORE_SERVICE_ACCOUNT" > play_store_service_account.json.b64
+          base64 -d -i play_store_service_account.json.b64 > play_store_service_account.json
+
+      - name: Create a new internal draft release 🚢
+        run: bundle exec fastlane android internal
