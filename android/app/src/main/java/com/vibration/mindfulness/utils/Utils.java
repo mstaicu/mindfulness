@@ -1,4 +1,4 @@
-package com.mindfulness.utils;
+package com.vibration.mindfulness.utils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

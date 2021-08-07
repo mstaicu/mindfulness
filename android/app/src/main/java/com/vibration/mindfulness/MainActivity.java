@@ -1,4 +1,4 @@
-package com.mindfulness;
+package com.vibration.mindfulness;
 
 import com.facebook.react.ReactActivity;
 

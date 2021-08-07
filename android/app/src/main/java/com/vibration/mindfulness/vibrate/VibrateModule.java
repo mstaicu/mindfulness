@@ -1,4 +1,4 @@
-package com.mindfulness.vibrate;
+package com.vibration.mindfulness.vibrate;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -12,7 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
-import com.mindfulness.utils.Utils;
+import com.vibration.mindfulness.utils.Utils;
 
 import javax.annotation.Nonnull;
 

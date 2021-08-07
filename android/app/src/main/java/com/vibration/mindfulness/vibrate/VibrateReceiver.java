@@ -1,4 +1,4 @@
-package com.mindfulness.vibrate;
+package com.vibration.mindfulness.vibrate;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -12,7 +12,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
-import com.mindfulness.utils.Utils;
+import com.vibration.mindfulness.utils.Utils;
 
 public class VibrateReceiver extends BroadcastReceiver {
   public static final String TAG = "VibrateReceiver";

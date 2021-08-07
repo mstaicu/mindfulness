@@ -20,7 +20,7 @@ or alternatively using `brew install fastlane`
 ```
 fastlane android internal
 ```
-
+Deploy an internal test version to Google Play
 
 ----
 

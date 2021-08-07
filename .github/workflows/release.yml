@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+
+      - name: cache ruby bundler
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: cache gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/
+          key: cache-clean-gradle-${{ matrix.os }}-${{ matrix.jdk }}
+
+      - name: cache gradlew
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper/
+          key: cache-clean-wrapper-${{ matrix.os }}-${{ matrix.jdk }}
+
+      - name: install ruby bundle 👷🏻‍♂️
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: install node@14
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: install npm dependencies
+        run: |
+          npm install
+
+      - name: unpack Google Play upload key 📦
+        run: |
+          echo "$UPLOAD_KEY" | base64 -d > android/app/upload_key.keystore
+
+          echo "keyAlias=$UPLOAD_KEY_ALIAS" >> android/keystore.properties
+          echo "keyPassword=$UPLOAD_KEY_PASSWORD" >> android/keystore.properties
+          echo "storePassword=$UPLOAD_STORE_PASSWORD" >> android/keystore.properties
+        env:
+          UPLOAD_KEY: ${{ secrets.UPLOAD_KEY }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+
+      - name: unpack secret Google Play service account credentials 📦
+        run: |
+          echo "$PLAY_STORE_SERVICE_ACCOUNT" | base64 -d > play_store_service_account.json
+        env:
+          PLAY_STORE_SERVICE_ACCOUNT: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
+
+      - name: create a new internal draft release 🚢
+        run: bundle exec fastlane android internal
