@@ -14,7 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * Initial state
  */
 const INITIAL_STATE = {
-  repeatInterval: 15 * 60 * 1000,
+  isActive: false,
+  repeatInterval: 15,
 };
 
 const StateContext = createContext();

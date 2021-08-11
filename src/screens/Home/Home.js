@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NativeModules, StatusBar } from 'react-native';
 
 import styled from '@emotion/native';
@@ -8,18 +8,20 @@ import { useAppState } from '../../context';
 import { PlayButton, StopButton } from '../../components';
 
 const HomeScreen = () => {
-  const [active, setActive] = useState(false);
+  const [{ isActive }, updateAppState] = useAppState();
 
   return (
     <SafeArea>
       <PageStyled>
-        {active ? (
+        {isActive ? (
           <StopButton
             fill="#ffd3b6"
             width={300}
             height={300}
             onPress={async () => {
-              setActive(false);
+              updateAppState({
+                isActive: false,
+              });
 
               NativeModules.Vibrate.stop();
             }}
@@ -30,7 +32,9 @@ const HomeScreen = () => {
             width={300}
             height={300}
             onPress={() => {
-              setActive(true);
+              updateAppState({
+                isActive: true,
+              });
 
               NativeModules.Vibrate.start();
             }}
