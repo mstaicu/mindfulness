@@ -9,51 +9,80 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Utils {
-  static public JsonObject getAppState(Context context) {
-    SQLiteDatabase readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
+//  static public JsonObject getAppState(Context context) {
+//    SQLiteDatabase readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
+//
+//    if (readableDatabase != null) {
+//      /*
+//        .getItemImpl is defined in node_modules/@react-native-async-storage/async-storage/android/src/main/java/com/reactnativecommunity/asyncstorage/AsyncLocalStorageUtil.java
+//      */
+//      return JsonParser.parseString(AsyncLocalStorageUtil.getItemImpl(readableDatabase, "appState")).getAsJsonObject();
+//    }
+//
+//    return null;
+//  }
 
-    if (readableDatabase != null) {
-      /*
-        .getItemImpl is defined in node_modules/@react-native-async-storage/async-storage/android/src/main/java/com/reactnativecommunity/asyncstorage/AsyncLocalStorageUtil.java
-      */
-      return JsonParser.parseString(AsyncLocalStorageUtil.getItemImpl(readableDatabase, "appState")).getAsJsonObject();
-    }
-
-    return null;
+  static public int getRandomNumber(int min, int max) {
+    return ThreadLocalRandom.current().nextInt(min, max + 1);
   }
 
-  static public long[] getVibrationPattern(Context context) {
-    JsonObject appState = getAppState(context);
+  static public long[] getVibrationPattern() {
+    int numberOfVibrations = getRandomNumber(7, 10);
 
-    JsonArray vPattern = appState.get("vibrationPattern").getAsJsonArray();
+    long[] vibrationPattern = new long[numberOfVibrations];
 
-    // Convert the values from React Native to Android primitives
-    long[] mPattern = new long[vPattern.size()];
-
-    for (int i = 0; i < vPattern.size(); i++) {
-      mPattern[i] = (long) vPattern.get(i).getAsDouble();
+    for (int i = 0; i < numberOfVibrations; i++) {
+      vibrationPattern[i] = getRandomNumber(2, 4) * 50;
     }
 
-    return mPattern;
+    return vibrationPattern;
   }
 
-  static public int[] getVibrationAmplitudes(Context context) {
-    JsonObject appState = getAppState(context);
+//  static public long[] getVibrationPattern(Context context) {
+//    JsonObject appState = getAppState(context);
+//
+//    JsonArray vPattern = appState.get("vibrationPattern").getAsJsonArray();
+//
+//    // Convert the values from React Native to Android primitives
+//    long[] mPattern = new long[vPattern.size()];
+//
+//    for (int i = 0; i < vPattern.size(); i++) {
+//      mPattern[i] = (long) vPattern.get(i).getAsDouble();
+//    }
+//
+//    return mPattern;
+//  }
 
-    JsonArray vAmplitudes = appState.get("vibrationAmplitudes").getAsJsonArray();
+  static public int[] getVibrationPatternAmplitudes(long[] vibrationPattern) {
+    int[] vibrationPatternAmplitudes = new int[vibrationPattern.length];
 
-    // Convert the values from React Native to Android primitives
-    int[] mAmp = new int[vAmplitudes.size()];
-
-    for (int i = 0; i < vAmplitudes.size(); i++) {
-      mAmp[i] = vAmplitudes.get(i).getAsInt();
+    for (int i = 0; i < vibrationPattern.length; i++) {
+      vibrationPatternAmplitudes[i] = getRandomNumber(1, 4) * 100;
     }
 
-    return mAmp;
+    return vibrationPatternAmplitudes;
   }
+
+//  static public int[] getVibrationAmplitudes(Context context) {
+//    JsonObject appState = getAppState(context);
+//
+//    JsonArray vAmplitudes = appState.get("vibrationAmplitudes").getAsJsonArray();
+//
+//    // Convert the values from React Native to Android primitives
+//    int[] mAmp = new int[vAmplitudes.size()];
+//
+//    for (int i = 0; i < vAmplitudes.size(); i++) {
+//      mAmp[i] = vAmplitudes.get(i).getAsInt();
+//    }
+//
+//    return mAmp;
+//  }
 
   static public int getRepeatInterval(Context context) {
-    return Utils.getAppState(context).get("repeatInterval").getAsInt();
+//    return Utils.getAppState(context).get("repeatInterval").getAsInt();
+    return 15 * 60 * 1000;
   }
 }

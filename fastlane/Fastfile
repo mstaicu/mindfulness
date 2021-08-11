@@ -3,10 +3,10 @@ platform :android do
   desc "Deploy an internal test version to Google Play"
 
   lane :internal do
-    increment_version_code(
-      app_folder_name: './android/app',
-      gradle_file_path: './android/app/build.gradle'
-    )
+    # increment_version_code(
+    #   app_folder_name: './android/app',
+    #   gradle_file_path: './android/app/build.gradle'
+    # )
 
     gradle(
       task: "clean", 

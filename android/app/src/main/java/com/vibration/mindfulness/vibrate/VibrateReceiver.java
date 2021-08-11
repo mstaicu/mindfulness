@@ -14,6 +14,10 @@ import android.util.Log;
 
 import com.vibration.mindfulness.utils.Utils;
 
+import java.util.Arrays;
+
+import static com.vibration.mindfulness.utils.Utils.getVibrationPatternAmplitudes;
+
 public class VibrateReceiver extends BroadcastReceiver {
   public static final String TAG = "VibrateReceiver";
 
@@ -39,9 +43,13 @@ public class VibrateReceiver extends BroadcastReceiver {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       if (vibrator.hasAmplitudeControl()) {
+
+        long[] pattern = Utils.getVibrationPattern();
+        int[] amplitudes = Utils.getVibrationPatternAmplitudes(pattern);
+
         VibrationEffect effect = VibrationEffect.createWaveform(
-          Utils.getVibrationPattern(context),
-          Utils.getVibrationAmplitudes(context),
+          pattern,
+          amplitudes,
           -1
         );
 
@@ -54,7 +62,7 @@ public class VibrateReceiver extends BroadcastReceiver {
         );
       } else {
         VibrationEffect effect = VibrationEffect.createWaveform(
-          Utils.getVibrationPattern(context),
+          Utils.getVibrationPattern(),
           -1
         );
 
