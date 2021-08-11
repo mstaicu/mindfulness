@@ -1,47 +1,54 @@
 import React from 'react';
-import { NativeModules } from 'react-native';
+import { NativeModules, StatusBar } from 'react-native';
 
 import styled from '@emotion/native';
 
 import { useAppState } from '../../context';
 
-import { BellOff, BellOn } from '../../components';
+import { PlayButton, StopButton } from '../../components';
 
 const HomeScreen = () => {
   const [{ active }, updateAppState] = useAppState();
 
   return (
-    <PageStyled>
-      {active ? (
-        <BellOn
-          fill="#698474"
-          width={300}
-          height={300}
-          onPress={async () => {
-            updateAppState({
-              active: false,
-            });
+    <SafeArea>
+      <PageStyled>
+        {active ? (
+          <StopButton
+            fill="#ffd3b6"
+            width={300}
+            height={300}
+            onPress={async () => {
+              updateAppState({
+                active: false,
+              });
 
-            NativeModules.Vibrate.stop();
-          }}
-        />
-      ) : (
-        <BellOff
-          fill="#ffd3b6"
-          width={300}
-          height={300}
-          onPress={() => {
-            updateAppState({
-              active: true,
-            });
+              NativeModules.Vibrate.stop();
+            }}
+          />
+        ) : (
+          <PlayButton
+            fill="#698474"
+            width={300}
+            height={300}
+            onPress={() => {
+              updateAppState({
+                active: true,
+              });
 
-            NativeModules.Vibrate.start();
-          }}
-        />
-      )}
-    </PageStyled>
+              NativeModules.Vibrate.start();
+            }}
+          />
+        )}
+      </PageStyled>
+    </SafeArea>
   );
 };
+
+const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  margin-top: ${StatusBar.currentHeight || 0};
+`;
 
 const PageStyled = styled.View`
   flex: 1;
