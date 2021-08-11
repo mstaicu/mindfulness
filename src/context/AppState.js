@@ -14,16 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * Initial state
  */
 const INITIAL_STATE = {
-  /**
-   *
-   */
-  active: false,
-  /**
-   *
-   */
-  vibrationPattern: [100, 200, 100, 200],
-  vibrationAmplitudes: [0, 255, 0, 255],
-  repeatInterval: 10 * 1000,
+  repeatInterval: 15 * 60 * 1000,
 };
 
 const StateContext = createContext();

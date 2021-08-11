@@ -5,25 +5,26 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.facebook.react.modules.storage.AsyncLocalStorageUtil;
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
-//  static public JsonObject getAppState(Context context) {
-//    SQLiteDatabase readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
-//
-//    if (readableDatabase != null) {
-//      /*
-//        .getItemImpl is defined in node_modules/@react-native-async-storage/async-storage/android/src/main/java/com/reactnativecommunity/asyncstorage/AsyncLocalStorageUtil.java
-//      */
-//      return JsonParser.parseString(AsyncLocalStorageUtil.getItemImpl(readableDatabase, "appState")).getAsJsonObject();
-//    }
-//
-//    return null;
-//  }
+  static public JsonObject getAppState(Context context) {
+    SQLiteDatabase readableDatabase = ReactDatabaseSupplier.getInstance(context).getReadableDatabase();
+
+    if (readableDatabase != null) {
+      /*
+        .getItemImpl is defined in node_modules/@react-native-async-storage/async-storage/android/src/main/java/com/reactnativecommunity/asyncstorage/AsyncLocalStorageUtil.java
+      */
+      String serialisedAppState = AsyncLocalStorageUtil.getItemImpl(readableDatabase, "appState");
+
+      return serialisedAppState != null ? JsonParser.parseString(serialisedAppState).getAsJsonObject() : null;
+    }
+
+    return null;
+  }
 
   static public int getRandomNumber(int min, int max) {
     return ThreadLocalRandom.current().nextInt(min, max + 1);
@@ -82,7 +83,9 @@ public class Utils {
 //  }
 
   static public int getRepeatInterval(Context context) {
-//    return Utils.getAppState(context).get("repeatInterval").getAsInt();
-    return 15 * 60 * 1000;
+    JsonObject appState = Utils.getAppState(context);
+    int repeatInterval = appState != null ? appState.get("repeatInterval").getAsInt() : 15;
+
+    return repeatInterval * 60 * 1000;
   }
 }
