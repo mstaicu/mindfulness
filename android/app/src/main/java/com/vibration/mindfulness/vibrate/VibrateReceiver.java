@@ -12,15 +12,14 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.vibration.mindfulness.utils.Utils;
-
-import java.util.Arrays;
-
-import static com.vibration.mindfulness.utils.Utils.getVibrationPatternAmplitudes;
 
 public class VibrateReceiver extends BroadcastReceiver {
   public static final String TAG = "VibrateReceiver";
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public void onReceive(Context context, Intent intent) {
     Log.i(TAG, "Starting onReceive");
@@ -77,6 +76,7 @@ public class VibrateReceiver extends BroadcastReceiver {
     }
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   private void scheduleNextVibration(Context context, Intent intent) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -84,7 +84,7 @@ public class VibrateReceiver extends BroadcastReceiver {
     // Still not sure if this is a good idea or if we should recreate the intent
     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
 
-    alarmManager.setExact(
+    alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       System.currentTimeMillis() + Utils.getRepeatInterval(context),
       pendingIntent

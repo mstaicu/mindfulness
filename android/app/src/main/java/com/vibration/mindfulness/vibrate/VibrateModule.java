@@ -5,13 +5,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
+
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
 import com.vibration.mindfulness.utils.Utils;
 
 import javax.annotation.Nonnull;
@@ -30,6 +29,7 @@ public class VibrateModule extends ReactContextBaseJavaModule {
     return REACT_CLASS;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @ReactMethod
   public void start() {
     ReactApplicationContext context = getReactApplicationContext();
@@ -44,9 +44,9 @@ public class VibrateModule extends ReactContextBaseJavaModule {
       0
     );
 
-    alarmManager.setExact(
+    alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
-      System.currentTimeMillis() + Utils.getRepeatInterval(context),
+      System.currentTimeMillis(),
       pendingIntent
     );
   }
@@ -66,33 +66,5 @@ public class VibrateModule extends ReactContextBaseJavaModule {
     );
 
     alarmManager.cancel(pendingIntent);
-  }
-
-  @ReactMethod
-  public void test(ReadableArray vibrationPattern, ReadableArray vibrationPatternAmplitudes) {
-    ReactApplicationContext context = getReactApplicationContext();
-
-    long[] mVibratePattern = new long[vibrationPattern.size()];
-    int[] mAmplitudes = new int[vibrationPatternAmplitudes.size()];
-
-    for (int i = 0; i < vibrationPattern.size(); i++) {
-      mVibratePattern[i] = (long) vibrationPattern.getDouble(i);
-    }
-
-    for (int i = 0; i < vibrationPatternAmplitudes.size(); i++) {
-      mAmplitudes[i] = vibrationPatternAmplitudes.getInt(i);
-    }
-
-    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      if (vibrator.hasAmplitudeControl()) {
-        VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, mAmplitudes, -1);
-        vibrator.vibrate(effect);
-      } else {
-        VibrationEffect effect = VibrationEffect.createWaveform(mVibratePattern, -1);
-        vibrator.vibrate(effect);
-      }
-    }
   }
 }
