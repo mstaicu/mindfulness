@@ -27,7 +27,7 @@ public class VibrateReceiver extends BroadcastReceiver {
     AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
     if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-      vibrate(context);
+//      vibrate(context);
       playSound(context);
     }
 
