@@ -7,19 +7,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.os.Build;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.vibration.mindfulness.utils.Utils;
 
 public class VibrateReceiver extends BroadcastReceiver {
   public static final String TAG = "VibrateReceiver";
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public void onReceive(Context context, Intent intent) {
     Log.i(TAG, "Starting onReceive");
@@ -29,6 +28,7 @@ public class VibrateReceiver extends BroadcastReceiver {
 
     if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
       vibrate(context);
+      playSound(context);
     }
 
     // Schedule the next vibration
@@ -40,43 +40,46 @@ public class VibrateReceiver extends BroadcastReceiver {
   private void vibrate(Context context) {
     Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      if (vibrator.hasAmplitudeControl()) {
+    if (vibrator.hasAmplitudeControl()) {
 
-        long[] pattern = Utils.getVibrationPattern();
-        int[] amplitudes = Utils.getVibrationPatternAmplitudes(pattern);
+      long[] pattern = Utils.getVibrationPattern();
+      int[] amplitudes = Utils.getVibrationPatternAmplitudes(pattern);
 
-        VibrationEffect effect = VibrationEffect.createWaveform(
-          pattern,
-          amplitudes,
-          -1
-        );
+      VibrationEffect effect = VibrationEffect.createWaveform(
+        pattern,
+        amplitudes,
+        -1
+      );
 
-        vibrator.vibrate(
-          effect,
-          new AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .build()
-        );
-      } else {
-        VibrationEffect effect = VibrationEffect.createWaveform(
-          Utils.getVibrationPattern(),
-          -1
-        );
+      vibrator.vibrate(
+        effect,
+        new AudioAttributes.Builder()
+          .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+          .setUsage(AudioAttributes.USAGE_ALARM)
+          .build()
+      );
+    } else {
+      VibrationEffect effect = VibrationEffect.createWaveform(
+        Utils.getVibrationPattern(),
+        -1
+      );
 
-        vibrator.vibrate(
-          effect,
-          new AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .build()
-        );
-      }
+      vibrator.vibrate(
+        effect,
+        new AudioAttributes.Builder()
+          .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+          .setUsage(AudioAttributes.USAGE_ALARM)
+          .build()
+      );
     }
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
+  private void playSound(Context context) {
+    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    Ringtone r = RingtoneManager.getRingtone(context, notification);
+    r.play();
+  }
+
   private void scheduleNextVibration(Context context, Intent intent) {
     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

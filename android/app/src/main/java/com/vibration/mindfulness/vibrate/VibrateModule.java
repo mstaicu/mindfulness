@@ -4,14 +4,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.vibration.mindfulness.utils.Utils;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +25,6 @@ public class VibrateModule extends ReactContextBaseJavaModule {
     return REACT_CLASS;
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
   @ReactMethod
   public void start() {
     ReactApplicationContext context = getReactApplicationContext();
